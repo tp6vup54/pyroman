@@ -19,4 +19,4 @@ class MainWidget(QtWidgets.QMainWindow):
 		self.ui.btn_parse.clicked.connect(lambda: self.on_parse(self.ui.edit_source.text(), ''))
 
 	def on_parse(self, source_path, dest_path):
-		self.model.parse_dir_json(source_path, dest_path)
+		self.model.parse_dir(source_path, dest_path)

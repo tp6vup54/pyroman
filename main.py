@@ -7,11 +7,6 @@ from dirForSerial import DirForSerial
 from MainWidget import MainWidget
 from PyQt5 import QtGui, QtWidgets
 
-def test_data(d):
-	print(d.folderpath)
-	print('author', d.author)
-	print('timestamp', d.timestamp)
-
 def exception_hook(exctype, value, traceback):
     sys._excepthook(exctype, value, traceback)
     sys.exit(1)
