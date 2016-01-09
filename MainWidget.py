@@ -14,9 +14,20 @@ class MainWidget(QtWidgets.QMainWindow):
 
 	def initialize(self):
 		self.ui.edit_source.setText(global_vars.default_source_path)
+		self.ui.edit_dest.setText(global_vars.default_dest_path)
 
 	def event_connect(self):
-		self.ui.btn_parse.clicked.connect(lambda: self.on_parse(self.ui.edit_source.text(), ''))
+		self.ui.btn_parse.clicked.connect(lambda: self.on_parse(self.ui.edit_source.text(), self.ui.edit_dest.text()))
 
 	def on_parse(self, source_path, dest_path):
-		self.model.parse_dir(source_path, dest_path)
+		source_directory, dest_direcotry = self.model.parse_dir(source_path, dest_path)
+
+		self.set_table_widget_items(source_directory)
+
+	def set_table_widget_items(self, source_directory):
+		self.ui.tableWidget.setRowCount(len(source_directory))
+		for idx, d in enumerate(source_directory):
+			self.ui.tableWidget.setItem(idx, 0, QtWidgets.QTableWidgetItem(d.foldername))
+		self.ui.tableWidget.update()
+
+	

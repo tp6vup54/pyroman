@@ -10,7 +10,9 @@ class Model():
 		print('timestamp', d.timestamp)
 
 	def parse_dir(self, source_path, dest_path):
-		self.parse_directory(source_path)
+		source_directory = self.parse_directory(source_path)
+		dest_directory = self.parse_directory(dest_path)
+		return source_directory, dest_directory
 		
 	def parse_directory(self, path):
 		json_path = path + '\\' + global_vars.json_name
@@ -24,9 +26,10 @@ class Model():
 		if need_dump:
 			print('Serialize json.')
 			serialization.dump_path(path)
-		json = serialization.load_path(path)
-		for j in json:
-			self.test_data(j)
+		else:
+			print('json exist.')
+		directorys = serialization.load_path(path)
+		return directorys
 
 	def get_newer_file(self, file1, file2):
 		time1 = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(os.path.getmtime(file1)))
