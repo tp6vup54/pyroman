@@ -21,12 +21,23 @@ class MainWidget(QtWidgets.QMainWindow):
 
 	def on_parse(self, source_path, dest_path):
 		source_directory, dest_direcotry = self.model.parse_dir(source_path, dest_path)
-		self.set_table_widget_items(source_directory)
+		self.set_table_widget_items(source_directory, dest_direcotry)
 
-	def set_table_widget_items(self, source_directory):
+	def set_table_widget_items(self, source_directory, dest_direcotry):
 		self.ui.tableWidget.setRowCount(len(source_directory))
-		for idx, d in enumerate(source_directory):
-			self.ui.tableWidget.setItem(idx, 0, QtWidgets.QTableWidgetItem(d.foldername))
+		datasource = self.get_table_datasource(source_directory, dest_direcotry)
+		for column_idx, row in enumerate(datasource):
+			for row_idx, cell in enumerate(row):
+				self.ui.tableWidget.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 		self.ui.tableWidget.update()
 
-	
+	def get_table_datasource(self, source_directory, dest_direcotry):
+		datasource = []
+		datasource.append(self.get_datasource_column_1(source_directory))
+		return datasource
+
+	def get_datasource_column_1(self, source_directory):
+		return [d.foldername for d in source_directory]
+
+	def get_datasource_column_2(self, source_directory, dest_direcotry):
+		
