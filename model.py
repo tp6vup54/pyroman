@@ -10,8 +10,6 @@ class Model():
 		print('timestamp', d.timestamp)
 
 	def parse_dir(self, source_path, dest_path):
-		print(source_path)
-		print(os.path.isdir(source_path))
 		source_directory = self.parse_directory(source_path)
 		dest_directory = self.parse_directory(dest_path)
 		return source_directory, dest_directory

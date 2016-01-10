@@ -21,7 +21,6 @@ class MainWidget(QtWidgets.QMainWindow):
 
 	def on_parse(self, source_path, dest_path):
 		source_directory, dest_direcotry = self.model.parse_dir(source_path, dest_path)
-
 		self.set_table_widget_items(source_directory)
 
 	def set_table_widget_items(self, source_directory):
