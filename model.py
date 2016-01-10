@@ -10,12 +10,14 @@ class Model():
 		print('timestamp', d.timestamp)
 
 	def parse_dir(self, source_path, dest_path):
+		print(source_path)
+		print(os.path.isdir(source_path))
 		source_directory = self.parse_directory(source_path)
 		dest_directory = self.parse_directory(dest_path)
 		return source_directory, dest_directory
-		
+
 	def parse_directory(self, path):
-		json_path = path + '\\' + global_vars.json_name
+		json_path = path + global_vars.split + global_vars.json_name
 		need_dump = False
 		if not os.path.isfile(json_path):
 			print(path + ' not found.')
@@ -55,7 +57,7 @@ class Model():
 		return temp[0].split('/') + temp[1].split(':')
 
 	def get_latest_folder(self, path):
-		all_subdirs = [path + '\\' + d for d in os.listdir(path) if os.path.isdir(path + '\\' + d)]
+		all_subdirs = [path + global_vars.split + d for d in os.listdir(path) if os.path.isdir(path + global_vars.split + d)]
 		return max(all_subdirs, key=os.path.getmtime)
 
 

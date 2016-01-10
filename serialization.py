@@ -9,17 +9,17 @@ def dump_path(path):
 	if not os.path.isdir(path):
 		raise 'Argument path is not a path.'
 		return
-	pathes = [path + '\\' + f for f in os.listdir(path) if os.path.isdir(path + '\\' + f)]
+	pathes = [path + global_vars.split + f for f in os.listdir(path) if os.path.isdir(path + global_vars.split + f)]
 	d = [DirForSerial(folderpath = p) for p in pathes]
-	dump(d, path + '\\' + global_vars.json_name)
+	dump(d, path + global_vars.split + global_vars.json_name)
 
 def load_path(path):
 	if not os.path.isdir(path):
 		raise 'Argument path is not a path.'
 		return
-	if not os.path.isfile(path + '\\' + global_vars.json_name):
+	if not os.path.isfile(path + global_vars.split + global_vars.json_name):
 		return
-	d = load(path + '\\' + global_vars.json_name)
+	d = load(path + global_vars.split + global_vars.json_name)
 	return [Directory(serial = dd) for dd in d]
 
 def dump(arr, filename):
