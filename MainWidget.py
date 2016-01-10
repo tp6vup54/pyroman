@@ -25,19 +25,42 @@ class MainWidget(QtWidgets.QMainWindow):
 
 	def set_table_widget_items(self, source_directory, dest_direcotry):
 		self.ui.tableWidget.setRowCount(len(source_directory))
-		datasource = self.get_table_datasource(source_directory, dest_direcotry)
-		for column_idx, row in enumerate(datasource):
+		datasource = self.get_datasource(source_directory, dest_direcotry)
+		table_data = self.get_table_data(datasource)
+		for column_idx, row in enumerate(table_data):
 			for row_idx, cell in enumerate(row):
 				self.ui.tableWidget.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 		self.ui.tableWidget.update()
 
-	def get_table_datasource(self, source_directory, dest_direcotry):
+	def get_table_data(self, datasource):
+		result = []
+		result.append([d.foldername for d in datasource[0]])
+		result.append([d.foldername if d != None else '' for d in datasource[1]])
+		return result
+
+	def get_datasource(self, source_directory, dest_direcotry):
 		datasource = []
-		datasource.append(self.get_datasource_column_1(source_directory))
+		datasource.append(self.get_datasource_source(source_directory))
+		datasource.append(self.get_datasource_dest(source_directory, dest_direcotry))
 		return datasource
 
-	def get_datasource_column_1(self, source_directory):
-		return [d.foldername for d in source_directory]
+	def get_datasource_source(self, source_directory):
+		return source_directory
 
-	def get_datasource_column_2(self, source_directory, dest_direcotry):
-		
+	def get_datasource_dest(self, source_directory, dest_direcotry):
+		result = []
+		found = False
+		for source in source_directory:
+			for dest in dest_direcotry:
+				if (source.author != '' and\
+					dest.author != ''  and\
+					source.author == dest.author) or\
+					(source.group != '' and\
+					dest.group != '' and\
+					source.group == dest.group):
+					result.append(dest)
+					found = True
+			if not found:
+				result.append(None)
+			found = False
+		return result

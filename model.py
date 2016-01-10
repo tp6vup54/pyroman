@@ -7,7 +7,7 @@ class Model():
 	def test_data(self, d):
 		print(d.folderpath)
 		print('author', d.author)
-		print('timestamp', d.timestamp)
+		print('foldername', d.foldername)
 
 	def parse_dir(self, source_path, dest_path):
 		source_directory = self.parse_directory(source_path)
