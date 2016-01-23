@@ -3,9 +3,23 @@ import time
 import global_vars
 from dirForSerial import DirForSerial
 
+def get_title_name(foldername):
+	if foldername == '':
+		return ''
+	while '(' in foldername and ')' in foldername:
+		foldername = foldername.replace(foldername[foldername.index('('):foldername.index(')') + 1], '')
+	while '[' in foldername and ']' in foldername:
+		foldername = foldername.replace(foldername[foldername.index('['):foldername.index(']') + 1], '')
+	return foldername.strip()
+
 class Directory():
 	def __init__(self, folderpath = None, serial = None):
 		self.folderpath = ''
+		self.timestamp = ''
+		self.foldername = ''
+		self.author = ''
+		self.group = ''
+		self.__name = ''
 		if folderpath != None:
 			self.folderpath = folderpath
 			self.timestamp = ''
@@ -20,3 +34,16 @@ class Directory():
 			self.group = author_string[:author_string.find('(')] if '(' in author_string else ''
 			self.author = self.author.replace(' ', '')
 			self.group = self.group.replace(' ', '')
+
+	def get_name(self):
+		if self.__name == '':
+			self.__name = get_title_name(self.foldername)
+		return self.__name
+
+	def set_name(self, name):
+		self.__name = name
+
+	def del_name(self):
+		del self.__name
+
+	name = property(get_name, set_name, del_name, '')

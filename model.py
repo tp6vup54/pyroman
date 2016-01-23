@@ -2,23 +2,17 @@ import os
 import time
 import serialization
 import global_vars
+import directory
 
 class Model():
-	def test_data(self, d):
-		print(d.folderpath)
-		print('author', d.author)
-		print('foldername', d.foldername)
-
-	def parse_dir(self, source_path, dest_path):
-		source_directory = self.parse_directory(source_path)
-		dest_directory = self.parse_directory(dest_path)
-		return source_directory, dest_directory
-
-	def parse_directory(self, path):
+	def parse_directory(self, path, force = False):
 		json_path = path + global_vars.split + global_vars.json_name
 		need_dump = False
 		if not os.path.isfile(json_path):
 			print(path + ' not found.')
+			need_dump = True
+		elif force:
+			print('Force parse.')
 			need_dump = True
 		elif self.get_newer_file(self.get_latest_folder(path), json_path) != 2:
 			print('A file newer than json is found.')
@@ -28,8 +22,8 @@ class Model():
 			serialization.dump_path(path)
 		else:
 			print('json exist.')
-		directorys = serialization.load_path(path)
-		return directorys
+		directories = serialization.load_path(path)
+		return directories
 
 	def get_newer_file(self, file1, file2):
 		time1 = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(os.path.getmtime(file1)))
@@ -58,4 +52,11 @@ class Model():
 		all_subdirs = [path + global_vars.split + d for d in os.listdir(path) if os.path.isdir(path + global_vars.split + d)]
 		return max(all_subdirs, key=os.path.getmtime)
 
-
+	def check_folder_is_duplicate(self, source, dest):
+		if not dest:
+			return False
+		dest_dir = [f for f in os.listdir(dest.folderpath)]
+		for d in dest_dir:
+			if source.name == directory.get_title_name(d):
+				return True
+		return False
