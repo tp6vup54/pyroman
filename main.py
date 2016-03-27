@@ -1,11 +1,6 @@
-import os
 import sys
-import json
-import serialization
-from directory import Directory
-from dirForSerial import DirForSerial
 from MainWidget import MainWidget
-from PyQt5 import QtGui, QtWidgets
+from PyQt5 import QtWidgets
 
 def exception_hook(exctype, value, traceback):
     sys._excepthook(exctype, value, traceback)
