@@ -101,11 +101,8 @@ class Controller():
 		for source in source_directory:
 			for dest in dest_directory:
 				if (source.author != '' and\
-					dest.author != ''  and\
-					dest.group != ''  and\
 					(source.author == dest.author or source.author == dest.group)) or\
 					(source.group != '' and\
-					dest.foldername != '' and\
 					source.group in dest.foldername):
 					result.append(dest)
 					found = True
