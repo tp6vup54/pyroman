@@ -3,9 +3,10 @@ import time
 import serialization
 import global_vars
 import directory
+from image import image
 
-class Model():
-	def parse_directory(self, path, force = False):
+class directory_util():
+	def parse_directory_with_json(self, path, force = False):
 		json_path = path + global_vars.split + global_vars.json_name
 		need_dump = False
 		if not os.path.isfile(json_path):
@@ -24,6 +25,12 @@ class Model():
 			print('json exist.')
 		directories = serialization.load_path(path)
 		return directories
+
+	def parse_image(self, path):
+		pathes = [path + global_vars.split + f for f in os.listdir(path)\
+		          if os.path.isfile(path + global_vars.split + f) and os.path.splitext(f)[1] in global_vars.image_valid_extension]
+		images = [image(p) for p in pathes]
+		return images
 
 	def get_newer_file(self, file1, file2):
 		time1 = time.strftime('%Y/%m/%d %H:%M:%S', time.gmtime(os.path.getmtime(file1)))
@@ -55,7 +62,10 @@ class Model():
 	def check_folder_is_duplicate(self, source, dest):
 		if not dest:
 			return False
-		dest_dir = [f for f in os.listdir(dest.folderpath)]
+		try:
+			dest_dir = [f for f in os.listdir(dest.folderpath)]
+		except FileNotFoundError:
+			return False
 		for d in dest_dir:
 			if source.name == directory.get_title_name(d):
 				return True

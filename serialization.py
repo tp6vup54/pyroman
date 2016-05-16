@@ -22,6 +22,17 @@ def load_path(path):
 	d = load(path + global_vars.split + global_vars.json_name)
 	return [Directory(serial = dd) for dd in d]
 
+# tags = { root key: keywords, ...}
+def dump_tags(tags, filename):
+	if not tags: return
+	dump(tags, filename)
+
+def load_tags(filename):
+	if not os.path.isfile(filename):
+		return
+	d = load(filename)
+	return d
+
 def dump(arr, filename):
 	dump = json.dumps(arr, default = utilities.object2dict)
 	filename += '.json' if filename[-5:] != '.json' else ''
