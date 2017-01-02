@@ -1,6 +1,5 @@
-class source_handler():
-    def __init__(self, view, dir_util):
-        self.dir_util = dir_util
+class Tab():
+    def __init__(self, view):
         self.view = view
         self.datasource = None
         self.table_data = None

@@ -1,14 +1,16 @@
 import os
-import global_vars
-from source_handler import source_handler
 
-class image_handler(source_handler):
-    def __init__(self, view, dir_util):
-        super().__init__(view, dir_util)
+from tabs import vars
+from tabs.tab import Tab
+import tabs.image_tab.util
+
+class ImageTab(Tab):
+    def __init__(self, view):
+        super().__init__(view)
 
     def parse(self, source_path, dest_path, force_parse_source=False, force_parse_dest=False):
         super().parse(source_path, dest_path, force_parse_source, force_parse_dest)
-        images = self.dir_util.parse_image(source_path)
+        images = util.parse_image(source_path)
         self.datasource = self.get_datasource(images, dest_path)
         self.table_data = self.get_table_data(self.datasource)
 
@@ -44,7 +46,7 @@ class image_handler(source_handler):
         result = []
         dest_dict = {}
         for _ in os.listdir(dest_path):
-            fullpath = dest_path + global_vars.split + _
+            fullpath = dest_path + vars.split + _
             if os.path.isdir(fullpath):
                 dest_dict.update({os.path.basename(_): fullpath})
         for i in images:

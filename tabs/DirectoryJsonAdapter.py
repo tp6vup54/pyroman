@@ -1,7 +1,8 @@
 import os
 import time
 
-class DirForSerial():
+
+class DirectoryJsonAdapter():
     def __init__(self, directory = None, folderpath = None):
         if directory != None:
             self.folderpath = directory.folderpath

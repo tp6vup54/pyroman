@@ -1,7 +1,9 @@
-from PyQt5 import QtCore, QtGui, QtWidgets, uic
+from PyQt5 import QtCore, QtGui, QtWidgets
+
 from mainwindow import Ui_MainWindow
-from controller import Controller
-import global_vars
+from tabs import vars
+from tabs.__init__ import Pyroman
+
 
 class MainWidget(QtWidgets.QMainWindow):
     def __init__(self):
@@ -9,15 +11,15 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.initialize()
-        self.controller = Controller(self)
+        self.controller = Pyroman(self)
         self.event_connect()
         self.tab_list = ['Manga', 'Image']
         self.current_tab = self.tab_list[0]
         self.button_mapper = {}
 
     def initialize(self):
-        self.ui.edit_source.setText(global_vars.default_source_path)
-        self.ui.edit_dest.setText(global_vars.default_manga_dest_path)
+        self.ui.edit_source.setText(vars.default_source_path)
+        self.ui.edit_dest.setText(vars.default_manga_dest_path)
         w = self.ui.tableWidgetManga.width()
         self.ui.tableWidgetManga.setColumnWidth(0, w * 3 / 10)
         self.ui.tableWidgetManga.setColumnWidth(1, w * 3 / 10)
@@ -57,14 +59,14 @@ class MainWidget(QtWidgets.QMainWindow):
                 button = QtWidgets.QPushButton(current_table)
                 button.setText('Move')
                 self.button_mapper[button] = row_idx
-                button.clicked.connect(self.controller.manga_page_handler.move_to_dest)
+                button.clicked.connect(self.controller.manga_tab.move_to_dest)
                 current_table.setCellWidget(row_idx, 3, button)
 
     def __set_image_table(self, current_table, table_data):
         pass
 
     def on_change_tab(self, idx):
-        self.ui.edit_dest.setText(global_vars.tab_path_dict[idx])
+        self.ui.edit_dest.setText(vars.tab_path_dict[idx])
         self.current_tab = self.tab_list[idx]
 
     def going_to_show_image(self, image_path):

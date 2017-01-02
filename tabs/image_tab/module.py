@@ -1,16 +1,18 @@
 from pixivpy3 import *
-import global_vars
 
-class pixiv_util():
+from tabs import vars
+
+
+class Pixiv():
     __single = None
     def __init__(self):
         self.api = PixivAPI()
-        self.api.login(global_vars.pixiv_username, global_vars.pixiv_password)
+        self.api.login(vars.pixiv_username, vars.pixiv_password)
 
     def __new__(clz):
-        if not pixiv_util.__single:
-            pixiv_util.__single = object.__new__(clz)
-        return pixiv_util.__single
+        if not Pixiv.__single:
+            Pixiv.__single = object.__new__(clz)
+        return Pixiv.__single
 
     def __get_id(self, filename):
         id = filename.split('.')[0].split('_')[0]

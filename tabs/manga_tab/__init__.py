@@ -1,30 +1,34 @@
-from PyQt5 import QtWidgets
 import shutil
-from source_handler import source_handler
 
-class manga_handler(source_handler):
-    def __init__(self, view, dir_util):
-        super().__init__(view, dir_util)
+from PyQt5 import QtWidgets
+
+from tabs.tab import Tab
+from tabs.manga_tab import util
+
+class MangaTab(Tab):
+    def __init__(self, view):
+        super().__init__(view)
 
     def parse(self, source_path, dest_path, force_parse_source = False, force_parse_dest = False):
         super().parse(source_path, dest_path, force_parse_source, force_parse_dest)
-        source_directory = self.dir_util.parse_directory_with_json(source_path, force_parse_source)
-        dest_directory = self.dir_util.parse_directory_with_json(dest_path, force_parse_dest)
+        source_directory = util.parse_directory_with_json(source_path, force_parse_source)
+        dest_directory = util.parse_directory_with_json(dest_path, force_parse_dest)
         self.datasource = self.get_datasource(source_directory, dest_directory)
         self.table_data = self.get_table_data(self.datasource)
         self.view.set_tableWidget_items(self.table_data)
 
     def on_move_all(self):
+        result = None
         dest_valid_list = \
-            self.get_dest_valid_list( \
-                self.datasource, \
+            self.get_dest_valid_list(
+                self.datasource,
                 self.table_data)
         if len(dest_valid_list) >= 10:
-            result = QtWidgets.QMessageBox.question(self, \
-                                                    'Warning', \
+            result = QtWidgets.QMessageBox.question(self,
+                                                    'Warning',
                                                     'There are over ' + str(len(
-                                                        dest_valid_list)) + ' folders to move, are you sure to move all of them?', \
-                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, \
+                                                        dest_valid_list)) + ' folders to move, are you sure to move all of them?',
+                                                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                     QtWidgets.QMessageBox.No)
 
         if result == QtWidgets.QMessageBox.Yes:
@@ -68,10 +72,9 @@ class manga_handler(source_handler):
         found = False
         for source in source_directory:
             for dest in dest_directory:
-                if (source.author != '' and \
-                            (source.author.lower() == dest.author.lower() or source.author.lower() == dest.group.lower())) or \
-                        (source.group != '' and \
-                                     source.group in dest.foldername):
+                if (source.author != '' and
+                    (source.author.lower() == dest.author.lower() or source.author.lower() == dest.group.lower())) or \
+                    (source.group != '' and source.group in dest.foldername):
                     result.append(dest)
                     found = True
                     break
@@ -84,21 +87,17 @@ class manga_handler(source_handler):
         result = []
         result.append([d.foldername for d in datasource[0]])
         result.append([d.foldername if d != None else '' for d in datasource[1]])
-        result.append( \
-            [self.check_folder_is_duplicate( \
-                datasource[0][i], datasource[1][i]) for i in range(len(datasource[0]))
-             ])
+        result.append([self.check_folder_is_duplicate(
+            datasource[0][i], datasource[1][i]) for i in range(len(datasource[0]))])
         return result
 
     def check_folder_is_duplicate(self, source, dest):
-        return 'Yes' if self.dir_util.check_folder_is_duplicate(source, dest) else ''
+        return 'Yes' if util.check_folder_is_duplicate(source, dest) else ''
 
     def delete(self, target):
-        result = QtWidgets.QMessageBox.question(self.view, \
-                                                'Warning', \
-                                                'Are you sure want to delete this folder?\n' + str(
-                                                    target.foldername), \
-                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No, \
+        result = QtWidgets.QMessageBox.question(self.view, 'Warning', 'Are you sure want to delete this folder?\n'
+                                                + str(target.foldername),
+                                                QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No,
                                                 QtWidgets.QMessageBox.Yes)
         if result == QtWidgets.QMessageBox.Yes:
             try:

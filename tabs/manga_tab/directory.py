@@ -1,7 +1,8 @@
 import os
 import time
-import global_vars
-from dirForSerial import DirForSerial
+
+from tabs import vars
+
 
 def get_title_name(foldername):
     if foldername == '':
@@ -27,7 +28,7 @@ class Directory():
             self.folderpath = serial.folderpath
             self.timestamp = serial.timestamp
         if self.folderpath != '':
-            self.foldername = self.folderpath.split(global_vars.split)[-1:][0]
+            self.foldername = self.folderpath.split(vars.split)[-1:][0]
             self.timestamp = time.ctime(os.path.getmtime(folderpath)) if self.timestamp == '' else self.timestamp
             author_string = self.folderpath[self.folderpath.find('[') + 1:self.folderpath.find(']')]
             self.author = author_string[author_string.find('(') + 1:author_string.find(')')] if '(' in author_string else author_string

@@ -1,25 +1,25 @@
-import os
 import json
-import global_vars
-import utilities
-from dirForSerial import DirForSerial
-from directory import Directory
+import os
+
+from tabs import vars
+from tabs.DirectoryJsonAdapter import DirectoryJsonAdapter
+from tabs.manga_tab import util
+from tabs.manga_tab.directory import Directory
+
 
 def dump_path(path):
     if not os.path.isdir(path):
         raise 'Argument path is not a path.'
-        return
-    pathes = [path + global_vars.split + f for f in os.listdir(path) if os.path.isdir(path + global_vars.split + f)]
-    d = [DirForSerial(folderpath = p) for p in pathes]
-    dump(d, path + global_vars.split + global_vars.json_name)
+    pathes = [path + vars.split + f for f in os.listdir(path) if os.path.isdir(path + vars.split + f)]
+    d = [DirectoryJsonAdapter(folderpath = p) for p in pathes]
+    dump(d, path + vars.split + vars.json_name)
 
 def load_path(path):
     if not os.path.isdir(path):
         raise 'Argument path is not a path.'
+    if not os.path.isfile(path + vars.split + vars.json_name):
         return
-    if not os.path.isfile(path + global_vars.split + global_vars.json_name):
-        return
-    d = load(path + global_vars.split + global_vars.json_name)
+    d = load(path + vars.split + vars.json_name)
     return [Directory(serial = dd) for dd in d]
 
 # tags = { root key: keywords, ...}
@@ -34,7 +34,7 @@ def load_tags(filename):
     return d
 
 def dump(arr, filename):
-    dump = json.dumps(arr, default = utilities.object2dict)
+    dump = json.dumps(arr, default =util.object2dict)
     filename += '.json' if filename[-5:] != '.json' else ''
     with open(filename, 'w') as f:
         f.write(dump)
@@ -42,5 +42,5 @@ def dump(arr, filename):
 def load(filename):
     filename += '.json' if filename[-5:] != '.json' else ''
     with open(filename, 'r') as f:
-        load = json.loads(f.read(), object_hook = utilities.dict2object)
+        load = json.loads(f.read(), object_hook =util.dict2object)
     return load
