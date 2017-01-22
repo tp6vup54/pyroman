@@ -13,7 +13,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.initialize()
         self.controller = Pyroman(self)
         self.event_connect()
-        self.tab_list = ['Manga', 'Image']
+        self.tab_list = ['Manga', 'Image', 'Magazine']
         self.current_tab = self.tab_list[0]
         self.button_mapper = {}
 
@@ -37,23 +37,24 @@ class MainWidget(QtWidgets.QMainWindow):
     def set_tableWidget_items(self, table_data):
         current_table = {
             self.tab_list[0]: self.ui.tableWidgetManga,
-            self.tab_list[1]: self.ui.tableWidgetImage}.get(self.current_tab)
+            self.tab_list[1]: self.ui.tableWidgetImage,
+            self.tab_list[2]: self.ui.tableWidgetMagazine}.get(self.current_tab)
         if not current_table:
             return
-        self.__set_table_value(current_table, table_data)
+        self._set_table_value(current_table, table_data)
         if self.current_tab == self.tab_list[0]:
-            self.__set_manga_table(current_table, table_data)
+            self._set_manga_table(current_table, table_data)
         elif self.current_tab == self.tab_list[1]:
-            self.__set_image_table(current_table, table_data)
+            self._set_image_table(current_table, table_data)
         current_table.update()
 
-    def __set_table_value(self, current_table, table_data):
+    def _set_table_value(self, current_table, table_data):
         current_table.setRowCount(len(table_data[0]))
         for column_idx, row in enumerate(table_data):
             for row_idx, cell in enumerate(row):
                 current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 
-    def __set_manga_table(self, current_table, table_data):
+    def _set_manga_table(self, current_table, table_data):
         for row_idx, duplicated in enumerate(table_data[2]):
             if not duplicated:
                 button = QtWidgets.QPushButton(current_table)
@@ -62,11 +63,12 @@ class MainWidget(QtWidgets.QMainWindow):
                 button.clicked.connect(self.controller.manga_tab.move_to_dest)
                 current_table.setCellWidget(row_idx, 3, button)
 
-    def __set_image_table(self, current_table, table_data):
+    def _set_image_table(self, current_table, table_data):
         pass
 
     def on_change_tab(self, idx):
-        self.ui.edit_dest.setText(vars.tab_path_dict[idx])
+        self.ui.edit_dest.setText(vars.dest_path_dict[idx])
+        self.ui.edit_source.setText(vars.source_path_dict[idx])
         self.current_tab = self.tab_list[idx]
 
     def going_to_show_image(self, image_path):
