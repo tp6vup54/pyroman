@@ -47,7 +47,7 @@ class LivedoorParser(Parser):
         return new_magazine
 
     def _standardize_big_caption(self, caption):
-        return (caption.contents[0], caption.contents[1].text)
+        return (str(caption.contents[0])[:-1], caption.contents[1].text)
 
     def _standardize_small_caption(self, caption):
         text = caption.text
