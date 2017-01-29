@@ -3,6 +3,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from mainwindow import Ui_MainWindow
 from tabs import vars
 from tabs.__init__ import Pyroman
+import ui.header
 
 
 class MainWidget(QtWidgets.QMainWindow):
@@ -25,6 +26,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tableWidgetManga.setColumnWidth(1, w * 3 / 10)
         self.ui.tableWidgetManga.setColumnWidth(2, w * 1.5 / 10)
         self.ui.tableWidgetManga.setColumnWidth(3, w * 1.5 / 10)
+        self.ui.tableWidgetMagazine.setHorizontalHeader(ui.header.MagazineHeader())
 
     def event_connect(self):
         self.ui.btn_parse.clicked.connect(lambda: self.controller.on_parse(self.ui.edit_source.text(), self.ui.edit_dest.text(), self.ui.tabWidget.currentIndex()))
@@ -52,12 +54,17 @@ class MainWidget(QtWidgets.QMainWindow):
                 current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 
     def _set_manga_table(self, current_table, table_data):
-        for row_idx, duplicated in enumerate(table_data[2]):
+        def create_move_button():
+            button = QtWidgets.QPushButton(current_table)
+            button.setText('Move')
+            self.button_mapper[button] = row_idx
+            button.clicked.connect(self.controller.manga_tab.move_to_dest)
+            return button
+
+        for row_idx, row in enumerate(table_data):
+            duplicated = row[2]
             if not duplicated:
-                button = QtWidgets.QPushButton(current_table)
-                button.setText('Move')
-                self.button_mapper[button] = row_idx
-                button.clicked.connect(self.controller.manga_tab.move_to_dest)
+                button = create_move_button()
                 current_table.setCellWidget(row_idx, 3, button)
 
     def _set_image_table(self, current_table, table_data):
