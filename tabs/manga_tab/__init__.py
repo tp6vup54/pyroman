@@ -89,7 +89,7 @@ class MangaTab(Tab):
         result.append([d.foldername if d != None else '' for d in datasource[1]])
         result.append([self.check_folder_is_duplicate(
             datasource[0][i], datasource[1][i]) for i in range(len(datasource[0]))])
-        return result
+        return list(map(list, zip(*result)))
 
     def check_folder_is_duplicate(self, source, dest):
         return 'Yes' if util.check_folder_is_duplicate(source, dest) else ''

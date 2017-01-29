@@ -46,9 +46,9 @@ class MainWidget(QtWidgets.QMainWindow):
         current_table.update()
 
     def _set_table_value(self, current_table, table_data):
-        current_table.setRowCount(len(table_data[0]))
-        for column_idx, row in enumerate(table_data):
-            for row_idx, cell in enumerate(row):
+        current_table.setRowCount(len(table_data))
+        for row_idx, row in enumerate(table_data):
+            for column_idx, cell in enumerate(row):
                 current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 
     def _set_manga_table(self, current_table, table_data):
