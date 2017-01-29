@@ -41,15 +41,16 @@ class LivedoorParser(Parser):
             captions = self.soup.find_all(selector['type'], selector['args'])
             for caption in captions:
                 if not first:
-                    new_magazine.works.append(Work(new_magazine, *selector['func'](caption.text)))
+                    new_magazine.works.append(Work(new_magazine, *selector['func'](caption)))
                 else:
                     first = False
         return new_magazine
 
-    def _standardize_big_caption(self, text):
-        return text.split('\n')[0].split('　')
+    def _standardize_big_caption(self, caption):
+        return (caption.contents[0], caption.contents[1].text)
 
-    def _standardize_small_caption(self, text):
+    def _standardize_small_caption(self, caption):
+        text = caption.text
         ret = text.split('\n')
         ret[1] = ret[1].replace('「', '')
         ret[1] = ret[1].replace('」', '')
