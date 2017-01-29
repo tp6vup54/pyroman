@@ -12,6 +12,10 @@ class MagazineTab(Tab):
         if parser == None:
             raise ProperParserNotFoundException(source_path)
         magazine = parser.parse(source_path)
+        self.view.set_tableWidget_items(self._get_table_data(magazine))
+
+    def _get_table_data(self, source):
+        return [[_.author_name, _.name] for _ in source.works]
 
     def _find_proper_parser(self, path):
         for parser in self.parsers:
