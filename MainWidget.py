@@ -35,17 +35,14 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tabWidget.currentChanged.connect(self.on_change_tab)
 
     def set_tableWidget_items(self, table_data):
-        current_table = {
-            self.tab_list[0]: self.ui.tableWidgetManga,
-            self.tab_list[1]: self.ui.tableWidgetImage,
-            self.tab_list[2]: self.ui.tableWidgetMagazine}.get(self.current_tab)
+        (current_table, func) = {
+            self.tab_list[0]: (self.ui.tableWidgetManga, self._set_manga_table),
+            self.tab_list[1]: (self.ui.tableWidgetImage, self._set_image_table),
+            self.tab_list[2]: (self.ui.tableWidgetMagazine, self._set_magazine_table)}.get(self.current_tab)
         if not current_table:
             return
         self._set_table_value(current_table, table_data)
-        if self.current_tab == self.tab_list[0]:
-            self._set_manga_table(current_table, table_data)
-        elif self.current_tab == self.tab_list[1]:
-            self._set_image_table(current_table, table_data)
+        func(current_table, table_data)
         current_table.update()
 
     def _set_table_value(self, current_table, table_data):
@@ -64,6 +61,9 @@ class MainWidget(QtWidgets.QMainWindow):
                 current_table.setCellWidget(row_idx, 3, button)
 
     def _set_image_table(self, current_table, table_data):
+        pass
+
+    def _set_magazine_table(self, current_table, table_data):
         pass
 
     def on_change_tab(self, idx):

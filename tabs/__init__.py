@@ -1,18 +1,22 @@
 from tabs.image_tab.__init__ import ImageTab
 from tabs.manga_tab.__init__ import MangaTab
+from tabs.magazine_tab.__init__ import MagazineTab
 
 
 class Pyroman():
     def __init__(self, view):
         self.manga_tab = MangaTab(view)
         self.image_tab = ImageTab(view)
+        self.magazine_tab = MagazineTab(view)
         self.view = view
 
-    def on_parse(self, source_path, dest_path, tab_index, force_parse_source = False, force_parse_dest = False):
+    def on_parse(self, source_path, dest_path, tab_index, force_parse_source=False, force_parse_dest=False):
         if tab_index == 0:
             self.manga_tab.parse(source_path, dest_path, force_parse_source, force_parse_dest)
         elif tab_index == 1:
             self.image_tab.parse(source_path, dest_path, force_parse_source, force_parse_dest)
+        elif tab_index == 2:
+            self.magazine_tab.parse(source_path, dest_path)
 
     def on_open_folder(self, x, y):
         import subprocess

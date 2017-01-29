@@ -12,4 +12,4 @@ class Work():
 
     @property
     def output(self):
-        return '[%s]%s(%s)' % (self.author_name, self.name, self.magazine.name)
+        return '[%cd s]%s(%s)' % (self.author_name, self.name, self.magazine.name)
