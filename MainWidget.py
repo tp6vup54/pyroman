@@ -17,6 +17,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.tab_list = ['Manga', 'Image', 'Magazine']
         self.current_tab = self.tab_list[0]
         self.button_mapper = {}
+        self._magazine_checkboxes = []
 
     def initialize(self):
         self.ui.edit_source.setText(vars.default_source_path)
@@ -26,11 +27,15 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tableWidgetManga.setColumnWidth(1, w * 3 / 10)
         self.ui.tableWidgetManga.setColumnWidth(2, w * 1.5 / 10)
         self.ui.tableWidgetManga.setColumnWidth(3, w * 1.5 / 10)
-        self.ui.tableWidgetMagazine.setHorizontalHeader(ui.header.MagazineHeader())
 
     def event_connect(self):
-        self.ui.btn_parse.clicked.connect(lambda: self.controller.on_parse(self.ui.edit_source.text(), self.ui.edit_dest.text(), self.ui.tabWidget.currentIndex()))
+        self.ui.btn_parse.clicked.connect(lambda: self.controller.on_parse(
+            self.ui.edit_source.text(), self.ui.edit_dest.text(), self.ui.tabWidget.currentIndex()
+        ))
         #self.ui.btn_move_all.clicked.connect(self.controller.on_move_all)
+        self.ui.pushButton_gen.clicked.connect(lambda: self.controller.magazine_tab.on_create_multiple_folders(
+            self._magazine_checkboxes, self.ui.edit_dest.text()
+        ))
         self.ui.tableWidgetManga.cellDoubleClicked.connect(self.controller.on_open_folder)
         self.ui.tableWidgetManga.keyPressEvent = self.controller.table_key_event
         self.ui.tableWidgetImage.cellPressed.connect(self.controller.on_show_image)
@@ -38,20 +43,18 @@ class MainWidget(QtWidgets.QMainWindow):
 
     def set_tableWidget_items(self, table_data):
         (current_table, func) = {
-            self.tab_list[0]: (self.ui.tableWidgetManga, self._set_manga_table),
-            self.tab_list[1]: (self.ui.tableWidgetImage, self._set_image_table),
-            self.tab_list[2]: (self.ui.tableWidgetMagazine, self._set_magazine_table)}.get(self.current_tab)
+            self.tab_list[0]: (self.ui.tableWidgetManga,
+                               lambda self, table_data: self._set_manga_table(self.ui.tableWidgetManga, table_data)),
+            self.tab_list[1]: (self.ui.tableWidgetImage,
+                               lambda self, table_data: self._set_image_table(self.ui.tableWidgetImage, table_data)),
+            self.tab_list[2]: (self.ui.tableWidgetMagazine,
+                               lambda self, table_data: self._set_magazine_table(self.ui.tableWidgetMagazine, table_data))
+        }.get(self.current_tab)
         if not current_table:
             return
-        self._set_table_value(current_table, table_data)
-        func(current_table, table_data)
-        current_table.update()
-
-    def _set_table_value(self, current_table, table_data):
         current_table.setRowCount(len(table_data))
-        for row_idx, row in enumerate(table_data):
-            for column_idx, cell in enumerate(row):
-                current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
+        func(self, table_data)
+        current_table.update()
 
     def _set_manga_table(self, current_table, table_data):
         def create_move_button():
@@ -61,7 +64,10 @@ class MainWidget(QtWidgets.QMainWindow):
             button.clicked.connect(self.controller.manga_tab.move_to_dest)
             return button
 
+        self.button_mapper = {}
         for row_idx, row in enumerate(table_data):
+            for column_idx, cell in enumerate(row):
+                current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
             duplicated = row[2]
             if not duplicated:
                 button = create_move_button()
@@ -71,7 +77,32 @@ class MainWidget(QtWidgets.QMainWindow):
         pass
 
     def _set_magazine_table(self, current_table, table_data):
-        pass
+        def create_checkbox_item(text):
+            cb = QtWidgets.QCheckBox(text)
+            self._magazine_checkboxes.append(cb)
+            return cb
+
+        self._magazine_checkboxes = []
+        for row_idx, row in enumerate(table_data):
+            for column_idx, cell in enumerate(row):
+                if column_idx == 0:
+                    current_table.setCellWidget(row_idx, column_idx, create_checkbox_item(cell))
+                else:
+                    current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
+        self.ui.tableWidgetMagazine.verticalHeader().hide()
+        # self.ui.tableWidgetMagazine.horizontalHeader().show()
+        self.ui.tableWidgetMagazine.setHorizontalHeader(
+            ui.header.MagazineHeader(self.ui.tableWidgetMagazine))
+        self.ui.tableWidgetMagazine.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
+        # item = QtWidgets.QTableWidgetItem()
+        # item.setText('Author')
+        # self.ui.tableWidgetMagazine.setHorizontalHeaderItem(0, item)
+        # item = QtWidgets.QTableWidgetItem()
+        # item.setText('Name')
+        # self.ui.tableWidgetMagazine.setHorizontalHeaderItem(1, item)
+        w = self.ui.tableWidgetMagazine.width()
+        self.ui.tableWidgetMagazine.setColumnWidth(0, w * 4 / 10)
+        self.ui.tableWidgetMagazine.setColumnWidth(1, w * 5 / 10)
 
     def on_change_tab(self, idx):
         self.ui.edit_dest.setText(vars.dest_path_dict[idx])

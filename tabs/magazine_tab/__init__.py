@@ -1,3 +1,5 @@
+import os
+
 from tabs.tab import Tab
 from tabs.magazine_tab.parser import *
 
@@ -22,6 +24,17 @@ class MagazineTab(Tab):
             if parser.domain in path:
                 return parser
         return None
+
+    def on_create_multiple_folders(self, list, dest):
+        for idx, checkbox in enumerate(list):
+            if checkbox.checkState():
+                pass
+                # self.on_create_folder(_, dest)
+
+    def on_create_folder(self, name, dest):
+        newpath = dest + '/' + name
+        if not os.path.exists(newpath):
+            os.makedirs(newpath)
 
 
 class ProperParserNotFoundException(Exception):

@@ -3,7 +3,10 @@ from PyQt5 import QtCore, QtWidgets
 class MagazineHeader(QtWidgets.QHeaderView):
     def __init__(self, parent=None):
         QtWidgets.QHeaderView.__init__(self, QtCore.Qt.Horizontal, parent)
+        self.show()
         self.is_on = False
+        self.setStretchLastSection(True)
+
 
     def paintSection(self, painter, rect, logicalIndex):
         painter.save()
