@@ -6,6 +6,7 @@ from tabs.magazine_tab.parser import *
 class MagazineTab(Tab):
     def __init__(self, view):
         super().__init__(view)
+        self.magazine = None
         self.parsers = [LivedoorParser(), AcgnichieParser()]
 
     def parse(self, source_path, dest_path, force_parse_source=False, force_parse_dest=False):
@@ -13,8 +14,8 @@ class MagazineTab(Tab):
         parser = self._find_proper_parser(source_path)
         if parser == None:
             raise ProperParserNotFoundException(source_path)
-        magazine = parser.parse(source_path)
-        self.view.set_tableWidget_items(self._get_table_data(magazine))
+        self.magazine = parser.parse(source_path)
+        self.view.set_tableWidget_items(self._get_table_data(self.magazine))
 
     def _get_table_data(self, source):
         return [[_.author_name, _.name] for _ in source.works]
@@ -35,6 +36,11 @@ class MagazineTab(Tab):
         newpath = dest + '/' + name
         if not os.path.exists(newpath):
             os.makedirs(newpath)
+
+    def get_image_url(self, idx):
+        if idx > len(self.magazine.works):
+            return None
+        return self.magazine.works[idx].image_url
 
 
 class ProperParserNotFoundException(Exception):

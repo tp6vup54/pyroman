@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from urllib.request import urlopen
 
 from mainwindow import Ui_MainWindow
 from tabs import vars
@@ -27,6 +28,9 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tableWidgetManga.setColumnWidth(1, w * 3 / 10)
         self.ui.tableWidgetManga.setColumnWidth(2, w * 1.5 / 10)
         self.ui.tableWidgetManga.setColumnWidth(3, w * 1.5 / 10)
+        self.ui.tableWidgetMagazine.verticalHeader().hide()
+        self.ui.tableWidgetMagazine.horizontalHeader().hide()
+        self.ui.label_work_preview.setAlignment(QtCore.Qt.AlignCenter)
 
     def event_connect(self):
         self.ui.btn_parse.clicked.connect(lambda: self.controller.on_parse(
@@ -40,6 +44,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tableWidgetManga.keyPressEvent = self.controller.table_key_event
         self.ui.tableWidgetImage.cellPressed.connect(self.controller.on_show_image)
         self.ui.tabWidget.currentChanged.connect(self.on_change_tab)
+        self.ui.tableWidgetMagazine.itemSelectionChanged.connect(self.on_work_selected_in_magazine)
 
     def set_tableWidget_items(self, table_data):
         (current_table, func) = {
@@ -90,10 +95,9 @@ class MainWidget(QtWidgets.QMainWindow):
                     current_table.setCellWidget(row_idx, column_idx, create_checkbox_item(cell))
                 else:
                     current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
-        self.ui.tableWidgetMagazine.verticalHeader().hide()
-        # self.ui.tableWidgetMagazine.horizontalHeader().show()
         header = ui.header.MagazineHeader(self.ui.tableWidgetMagazine)
         header.check_all_delegate = self.on_check_all_magazine
+        # header.sectionClicked.connect(self.on_work_selected_in_magazine)
         self.ui.tableWidgetMagazine.setHorizontalHeader(header)
         self.ui.tableWidgetMagazine.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
         # item = QtWidgets.QTableWidgetItem()
@@ -119,6 +123,14 @@ class MainWidget(QtWidgets.QMainWindow):
         if state == 0:
             self.ui.tableWidgetMagazine.horizontalHeader().is_on = False
         self.ui.tableWidgetMagazine.horizontalHeader().updateSection(0)
+
+    def on_work_selected_in_magazine(self):
+        row_idx = self.ui.tableWidgetMagazine.selectedItems()[0].row()
+        image_url = self.controller.magazine_tab.get_image_url(row_idx)
+        data = urlopen(image_url).read()
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(data)
+        self.ui.label_work_preview.setPixmap(pixmap)
 
     def going_to_show_image(self, image_path):
         pixmap = QtGui.QPixmap(image_path)

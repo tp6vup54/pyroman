@@ -5,10 +5,11 @@ class Magazine():
 
 
 class Work():
-    def __init__(self, magazine, author_name, name):
+    def __init__(self, magazine, author_name, name, image_url):
         self.author_name = author_name
         self.name = name
         self.magazine = magazine
+        self.image_url = image_url
 
     @property
     def output(self):

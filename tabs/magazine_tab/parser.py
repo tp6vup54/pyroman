@@ -29,19 +29,28 @@ class LivedoorParser(Parser):
     def __init__(self):
         super().__init__()
         self.domain = 'livedoor'
-        self.work_selectors = [{'type': 'div', 'args': {'class': 'deka-caption'}, 'func': self._standardize_big_caption},
-                               {'type': 'div', 'args': {'class': 'sanretu-caption-2gyou'},
-                                'func': self._standardize_small_caption}]
+        self.work_selectors = [{
+            'caption': {'selector': 'div.deka-caption', 'func': self._standardize_big_caption},
+            'image': {'selector': 'img.deka-gazou'}
+        }, {
+            'caption': {'selector': 'div.sanretu-caption-2gyou', 'func': self._standardize_small_caption},
+            'image':{'selector': '.img-body img.sanretu-gazou'}
+        }]
 
     def parse(self, url):
         super().parse(url)
         new_magazine = self._get_new_magazine()
         first = True
         for selector in self.work_selectors:
-            captions = self.soup.find_all(selector['type'], selector['args'])
-            for caption in captions:
+            captions = self.soup.select(selector['caption']['selector'])
+            images = self.soup.select(selector['image']['selector'])
+            for idx, caption in enumerate(captions):
                 if not first:
-                    new_magazine.works.append(Work(new_magazine, *selector['func'](caption)))
+                    new_magazine.works.append(
+                        Work(
+                            new_magazine,
+                            *selector['caption']['func'](caption),
+                            images[len(images) - len(captions) + idx]['src']))
                 else:
                     first = False
         return new_magazine
@@ -50,11 +59,17 @@ class LivedoorParser(Parser):
         return (str(caption.contents[0])[:-1], caption.contents[1].text)
 
     def _standardize_small_caption(self, caption):
+        def remove_useless_char(s):
+            s = s.replace('「', '')
+            s = s.replace('」', '')
+            s = s.replace('\n', '')
+            s = s.strip()
+            return s
+
         text = caption.text
-        ret = text.split('\n')
-        ret[1] = ret[1].replace('「', '')
-        ret[1] = ret[1].replace('」', '')
-        ret[1] = ret[1].strip()
+        ret = text.rsplit('「', 1)
+        ret[0] = remove_useless_char(ret[0])
+        ret[1] = remove_useless_char(ret[1])
         return ret
 
     def _get_magazine_name(self):
