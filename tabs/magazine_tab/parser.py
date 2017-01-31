@@ -46,11 +46,11 @@ class LivedoorParser(Parser):
             images = self.soup.select(selector['image']['selector'])
             for idx, caption in enumerate(captions):
                 if not first:
-                    new_magazine.works.append(
-                        Work(
-                            new_magazine,
-                            *selector['caption']['func'](caption),
-                            images[len(images) - len(captions) + idx]['src']))
+                    new_magazine.works.append(Work(
+                        new_magazine,
+                        *selector['caption']['func'](caption),
+                        images[len(images) - len(captions) + idx]['src']
+                    ))
                 else:
                     first = False
         return new_magazine
@@ -83,16 +83,23 @@ class AcgnichieParser(Parser):
     def __init__(self):
         super().__init__()
         self.domain = 'acgnichie'
-        self.work_selectors = [{'type': 'td', 'args': {'class': 'tr-caption'}, 'func': self._standardize_caption}]
+        self.work_selectors = [{
+            'caption': {'selector': 'td.tr-caption', 'func': self._standardize_caption},
+            'image': {'selector': '.tr-caption-container img'}}]
 
     def parse(self, url):
         super().parse(url)
         new_magazine = self._get_new_magazine()
         for selector in self.work_selectors:
-            captions = self.soup.find_all(selector['type'], selector['args'])
-            for caption in captions:
+            captions = self.soup.select(selector['caption']['selector'])
+            images = self.soup.select(selector['image']['selector'])
+            for idx, caption in enumerate(captions):
                 if self._check_if_caption_valid(caption.text):
-                    new_magazine.works.append(Work(new_magazine, *selector['func'](caption.text)))
+                    new_magazine.works.append(Work(
+                        new_magazine,
+                        *selector['caption']['func'](caption.text),
+                        images[idx]['src']
+                    ))
         return new_magazine
 
     def _check_if_caption_valid(self, text):
