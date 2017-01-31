@@ -2,7 +2,7 @@ import os
 
 from tabs import vars
 from tabs.tab import Tab
-import tabs.image_tab.util
+from tabs.image_tab.util import *
 
 class ImageTab(Tab):
     def __init__(self, view):
@@ -10,7 +10,7 @@ class ImageTab(Tab):
 
     def parse(self, source_path, dest_path, force_parse_source=False, force_parse_dest=False):
         super().parse(source_path, dest_path, force_parse_source, force_parse_dest)
-        images = util.parse_image(source_path)
+        images = parse_image(source_path)
         self.datasource = self.get_datasource(images, dest_path)
         self.table_data = self.get_table_data(self.datasource)
 
