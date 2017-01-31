@@ -5,8 +5,8 @@ class MagazineHeader(QtWidgets.QHeaderView):
         QtWidgets.QHeaderView.__init__(self, QtCore.Qt.Horizontal, parent)
         self.show()
         self.is_on = False
+        self.check_all_delegate = None
         self.setStretchLastSection(True)
-
 
     def paintSection(self, painter, rect, logicalIndex):
         painter.save()
@@ -25,4 +25,6 @@ class MagazineHeader(QtWidgets.QHeaderView):
     def mousePressEvent(self, event):
         self.is_on = not self.is_on
         self.updateSection(0)
+        if self.check_all_delegate != None:
+            self.check_all_delegate(QtCore.Qt.Checked if self.is_on else QtCore.Qt.Unchecked)
         QtWidgets.QHeaderView.mousePressEvent(self, event)

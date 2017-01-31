@@ -80,6 +80,7 @@ class MainWidget(QtWidgets.QMainWindow):
         def create_checkbox_item(text):
             cb = QtWidgets.QCheckBox(text)
             self._magazine_checkboxes.append(cb)
+            cb.stateChanged.connect(self.on_magazine_checked_state_changed)
             return cb
 
         self._magazine_checkboxes = []
@@ -91,8 +92,9 @@ class MainWidget(QtWidgets.QMainWindow):
                     current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
         self.ui.tableWidgetMagazine.verticalHeader().hide()
         # self.ui.tableWidgetMagazine.horizontalHeader().show()
-        self.ui.tableWidgetMagazine.setHorizontalHeader(
-            ui.header.MagazineHeader(self.ui.tableWidgetMagazine))
+        header = ui.header.MagazineHeader(self.ui.tableWidgetMagazine)
+        header.check_all_delegate = self.on_check_all_magazine
+        self.ui.tableWidgetMagazine.setHorizontalHeader(header)
         self.ui.tableWidgetMagazine.setSelectionBehavior(QtWidgets.QTableWidget.SelectRows)
         # item = QtWidgets.QTableWidgetItem()
         # item.setText('Author')
@@ -108,6 +110,15 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.edit_dest.setText(vars.dest_path_dict[idx])
         self.ui.edit_source.setText(vars.source_path_dict[idx])
         self.current_tab = self.tab_list[idx]
+
+    def on_check_all_magazine(self, state):
+        for cb in self._magazine_checkboxes:
+            cb.setCheckState(state)
+
+    def on_magazine_checked_state_changed(self, state):
+        if state == 0:
+            self.ui.tableWidgetMagazine.horizontalHeader().is_on = False
+        self.ui.tableWidgetMagazine.horizontalHeader().updateSection(0)
 
     def going_to_show_image(self, image_path):
         pixmap = QtGui.QPixmap(image_path)
