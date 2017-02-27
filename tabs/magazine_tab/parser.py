@@ -45,7 +45,7 @@ class LivedoorParser(Parser):
             captions = self.soup.select(selector['caption']['selector'])
             images = self.soup.select(selector['image']['selector'])
             for idx, caption in enumerate(captions):
-                if not first:
+                if not first and self._is_caption_valid(caption):
                     new_magazine.works.append(Work(
                         new_magazine,
                         *selector['caption']['func'](caption),
@@ -54,6 +54,11 @@ class LivedoorParser(Parser):
                 else:
                     first = False
         return new_magazine
+
+    def _is_caption_valid(self, caption):
+        if len(caption.contents) > 4:
+            return False
+        return True
 
     def _standardize_big_caption(self, caption):
         return (str(caption.contents[0])[:-1], caption.contents[1].text)
@@ -68,6 +73,8 @@ class LivedoorParser(Parser):
 
         text = caption.text
         ret = text.rsplit('「', 1)
+        if len(ret) < 2:
+            ret = text.rsplit('\n', 1)
         ret[0] = remove_useless_char(ret[0])
         ret[1] = remove_useless_char(ret[1])
         return ret

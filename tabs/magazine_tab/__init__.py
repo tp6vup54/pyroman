@@ -29,11 +29,16 @@ class MagazineTab(Tab):
     def on_create_multiple_folders(self, list, dest):
         for idx, checkbox in enumerate(list):
             if checkbox.checkState():
-                pass
-                # self.on_create_folder(_, dest)
+                # pass
+                self.on_create_folder(self.magazine.works[idx].output, dest)
 
     def on_create_folder(self, name, dest):
-        newpath = dest + '/' + name
+        def replace_to_full_width_char(c):
+            if c in r'<>:"/\|?!*':
+                c = chr(0xFEE0 + ord(c))
+            return c
+
+        newpath = dest + '\\' + ''.join(map(replace_to_full_width_char, name))
         if not os.path.exists(newpath):
             os.makedirs(newpath)
 

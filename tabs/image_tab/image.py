@@ -16,10 +16,10 @@ class Image():
         return self.illust_id != None
 
     def get_valid_id(self, file_name):
-        result = re.search(r'^\d{7,}', file_name)
+        result = re.search(r'^\d{8,9}[._]', file_name)
         ret = None
         if result:
-            ret = result.group(0)
+            ret = result.group(0)[:-1]
         return ret
 
     def parse_tags(self, response):

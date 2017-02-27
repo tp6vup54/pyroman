@@ -6,7 +6,7 @@ default_magazine_source_path = ''
 # windows
 default_manga_dest_path = r'D:\odrive\Amazon Cloud Drive\Private\JoystickDriver\Manga'
 default_image_dest_path = r'D:\odrive\Amazon Cloud Drive\Private\ImageSet'
-default_magazine_dest_path = r'C:\Users\Thinker\Desktop'
+default_magazine_dest_path = r'C:\Users\Thinker\Desktop\tmp'
 # mac
 #default_source_path = '/Users/tp6vup54/Documents/'
 #default_dest_path = '/Users/tp6vup54/Desktop/dest/'
