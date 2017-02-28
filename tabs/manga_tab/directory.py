@@ -33,8 +33,8 @@ class Directory():
             author_string = self.folderpath[self.folderpath.find('[') + 1:self.folderpath.find(']')]
             self.author = author_string[author_string.find('(') + 1:author_string.find(')')] if '(' in author_string else author_string
             self.group = author_string[:author_string.find('(')] if '(' in author_string else ''
-            self.author = self.author.replace(' ', '')
-            self.group = self.group.replace(' ', '')
+            self.author = self.author.strip(' ')
+            self.group = self.group.strip(' ')
 
     def get_name(self):
         if self.__name == '':

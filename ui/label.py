@@ -33,7 +33,7 @@ class MangaPreviewLabel(QtWidgets.QLabel):
             self.setPixmap(pixmap)
 
     def scroll_preview(self, offset):
-        if offset.y() < 0 and self.current_image_index < len(self._image_list):
+        if offset.y() < 0 and self.current_image_index < len(self._image_list) - 1:
             self.current_image_index += 1
         elif offset.y() > 0 and self.current_image_index > 0:
             self.current_image_index -= 1
