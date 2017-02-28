@@ -56,6 +56,15 @@ class LivedoorParser(Parser):
         return new_magazine
 
     def _is_caption_valid(self, caption):
+        def remove_useless_line(str_list):
+            ret = []
+            ng_str = ['<br>', '<br/>', '\n']
+            for s in str_list:
+                if str(s).strip(' ') not in ng_str:
+                    ret.append(s)
+            return ret
+
+        caption.contents = remove_useless_line(caption.contents)
         if len(caption.contents) > 4:
             return False
         return True
