@@ -4,7 +4,7 @@ from urllib.request import urlopen
 from mainwindow import Ui_MainWindow
 from tabs import vars
 from tabs.__init__ import Pyroman
-import ui.header
+import ui.header, ui.tableWidget, ui.label
 
 
 class MainWidget(QtWidgets.QMainWindow):
@@ -19,15 +19,12 @@ class MainWidget(QtWidgets.QMainWindow):
         self.current_tab = self.tab_list[0]
         self.button_mapper = {}
         self._magazine_checkboxes = []
+        self.preview_label = ui.label.MangaPreviewLabel()
 
     def initialize(self):
         self.ui.edit_source.setText(vars.default_source_path)
         self.ui.edit_dest.setText(vars.default_manga_dest_path)
-        w = self.ui.tableWidgetManga.width()
-        self.ui.tableWidgetManga.setColumnWidth(0, w * 3 / 10)
-        self.ui.tableWidgetManga.setColumnWidth(1, w * 3 / 10)
-        self.ui.tableWidgetManga.setColumnWidth(2, w * 1.5 / 10)
-        self.ui.tableWidgetManga.setColumnWidth(3, w * 1.5 / 10)
+        self.ui.tableWidgetManga = ui.tableWidget.tableWidgetManga(self.ui.tab)
         self.ui.tableWidgetMagazine.verticalHeader().hide()
         self.ui.tableWidgetMagazine.horizontalHeader().hide()
         self.ui.label_work_preview.setAlignment(QtCore.Qt.AlignCenter)
@@ -41,6 +38,8 @@ class MainWidget(QtWidgets.QMainWindow):
             self._magazine_checkboxes, self.ui.edit_dest.text()
         ))
         self.ui.tableWidgetManga.cellDoubleClicked.connect(self.controller.on_open_folder)
+        self.ui.tableWidgetManga.cellEntered.connect(self.controller.on_preview_manga)
+        self.ui.tableWidgetManga.cellExited.connect(self.controller.on_preview_mange_terminate)
         self.ui.tableWidgetManga.keyPressEvent = self.controller.table_key_event
         self.ui.tableWidgetImage.cellPressed.connect(self.controller.on_show_image)
         self.ui.tabWidget.currentChanged.connect(self.on_change_tab)

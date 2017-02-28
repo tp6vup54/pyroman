@@ -1,3 +1,4 @@
+import os
 from tabs.image_tab.__init__ import ImageTab
 from tabs.manga_tab.__init__ import MangaTab
 from tabs.magazine_tab.__init__ import MagazineTab
@@ -28,6 +29,22 @@ class Pyroman():
                 subprocess.check_call(['explorer', directory.folderpath])
             except:
                 pass
+
+    def _get_image_list(self, path):
+        def is_image(filename):
+            return filename.lower().endswith(('.png', '.jpg', '.jpeg'))
+
+        if os.path.isdir(path):
+            return [os.path.join(path, f) for f in os.listdir(path) if is_image(f)]
+
+    def on_preview_manga(self, x, y):
+        if y == 0:
+            l = self._get_image_list(self.manga_tab.datasource[0][x].folderpath)
+            self.view.preview_label.set_image_path(l[0])
+            self.view.preview_label.show()
+
+    def on_preview_mange_terminate(self, x, y):
+        self.view.preview_label.hide()
 
     def on_show_image(self, x, y):
         self.view.going_to_show_image(self.image_tab.datasource[0][x].full_path)
