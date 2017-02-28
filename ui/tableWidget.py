@@ -7,6 +7,8 @@ class tableWidgetManga(QtWidgets.QTableWidget):
     def __init__(self, parent):
         super().__init__(parent)
         self.initialize()
+        self.current_hover_pos = (-1, -1)
+        self.scroll_preview_func = None
 
     def initialize(self):
         self.setGeometry(QtCore.QRect(0, 0, 911, 651))
@@ -45,6 +47,14 @@ class tableWidgetManga(QtWidgets.QTableWidget):
         self.setColumnWidth(1, w * 3 / 10)
         self.setColumnWidth(2, w * 1.5 / 10)
         self.setColumnWidth(3, w * 1.5 / 10)
+
+    def wheelEvent(self, *args, **kwargs):
+        if self.current_hover_pos[1] == 0:
+            delta = args[0].angleDelta() / 15
+            if self.scroll_preview_func:
+                self.scroll_preview_func(delta)
+        else:
+            super().wheelEvent(*args, **kwargs)
 
     def eventFilter(self, widget, event):
         if widget is self.viewport():

@@ -38,12 +38,14 @@ class Pyroman():
             return [os.path.join(path, f) for f in os.listdir(path) if is_image(f)]
 
     def on_preview_manga(self, x, y):
+        self.view.ui.tableWidgetManga.current_hover_pos = (x, y)
         if y == 0:
             l = self._get_image_list(self.manga_tab.datasource[0][x].folderpath)
-            self.view.preview_label.set_image_path(l[0])
+            self.view.preview_label.set_image_list(l)
             self.view.preview_label.show()
 
     def on_preview_mange_terminate(self, x, y):
+        self.view.ui.tableWidgetManga.current_hover_pos = (x, y)
         self.view.preview_label.hide()
 
     def on_show_image(self, x, y):

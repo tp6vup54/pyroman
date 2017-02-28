@@ -9,7 +9,13 @@ class MangaPreviewLabel(QtWidgets.QLabel):
         self.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         self.setScaledContents(True)
         self.setAttribute(QtCore.Qt.WA_TranslucentBackground)
+        self._image_list = []
+        self.current_image_index = -1
 
+    def set_image_list(self, l):
+        self._image_list = l
+        self.set_image_path(self._image_list[0])
+        self.current_image_index = 0
 
     def set_image_path(self, path):
         if os.path.isfile(path):
@@ -25,3 +31,10 @@ class MangaPreviewLabel(QtWidgets.QLabel):
 
             self.setMaximumSize(pixmap.size())
             self.setPixmap(pixmap)
+
+    def scroll_preview(self, offset):
+        if offset.y() < 0 and self.current_image_index < len(self._image_list):
+            self.current_image_index += 1
+        elif offset.y() > 0 and self.current_image_index > 0:
+            self.current_image_index -= 1
+        self.set_image_path(self._image_list[self.current_image_index])

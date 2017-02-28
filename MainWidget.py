@@ -12,6 +12,7 @@ class MainWidget(QtWidgets.QMainWindow):
         super(MainWidget, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.preview_label = ui.label.MangaPreviewLabel()
         self.initialize()
         self.controller = Pyroman(self)
         self.event_connect()
@@ -19,12 +20,12 @@ class MainWidget(QtWidgets.QMainWindow):
         self.current_tab = self.tab_list[0]
         self.button_mapper = {}
         self._magazine_checkboxes = []
-        self.preview_label = ui.label.MangaPreviewLabel()
 
     def initialize(self):
         self.ui.edit_source.setText(vars.default_source_path)
         self.ui.edit_dest.setText(vars.default_manga_dest_path)
         self.ui.tableWidgetManga = ui.tableWidget.tableWidgetManga(self.ui.tab)
+        self.ui.tableWidgetManga.scroll_preview_func = self.preview_label.scroll_preview
         self.ui.tableWidgetMagazine.verticalHeader().hide()
         self.ui.tableWidgetMagazine.horizontalHeader().hide()
         self.ui.label_work_preview.setAlignment(QtCore.Qt.AlignCenter)
