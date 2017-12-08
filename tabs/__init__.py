@@ -51,6 +51,10 @@ class Pyroman():
     def on_show_image(self, x, y):
         self.view.going_to_show_image(self.image_tab.datasource[0][x].full_path)
 
+    def on_move_image(self, selected):
+        if selected:
+            idx = selected[0].row()
+
     def table_key_event(self, event):
         from PyQt5 import QtCore, QtWidgets
         if event.key() == QtCore.Qt.Key_Delete:

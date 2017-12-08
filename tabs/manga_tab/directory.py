@@ -47,4 +47,11 @@ class Directory():
     def del_name(self):
         del self.__name
 
+    @property
+    def author_string(self):
+        if self.group == '':
+            return '[' + self.author + ']'
+        else:
+            return '[' + self.group + ' (' + self.author + ')]'
+
     name = property(get_name, set_name, del_name, '')

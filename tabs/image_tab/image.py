@@ -1,11 +1,11 @@
-import re, json
-
-from tabs import vars
+import re
+import json
+import os
 
 class Image():
     def __init__(self, full_path):
         self.full_path = full_path
-        self.file_name = full_path.split(vars.split)[-1]
+        self.file_name =os.path.basename(full_path)
         self.illust_id = self.get_valid_id(self.file_name)
         self.title = ''
         self.author = ''
@@ -23,12 +23,12 @@ class Image():
         return ret
 
     def parse_tags(self, response):
-        if response.status_code != 200:
-            raise ImageException(response.status_code, self.illust_id)
-        j = json.loads(response.text)
-        self.title = j['illust']['title']
-        self.author = j['illust']['user']['name']
-        self.tags = j['illust']['tags']
+        if response.status_code == 200:
+            # raise ImageException(response.status_code, self.illust_id)
+            j = json.loads(response.text)
+            self.title = j['illust']['title']
+            self.author = j['illust']['user']['name']
+            self.tags = j['illust']['tags']
 
 
 class ImageException(Exception):

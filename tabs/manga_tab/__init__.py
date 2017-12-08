@@ -1,3 +1,4 @@
+import os
 import shutil
 
 from PyQt5 import QtWidgets
@@ -49,14 +50,24 @@ class MangaTab(Tab):
 
     def move_to_dest(self):
         idx = self.view.button_mapper[self.view.sender()]
-        if not self.datasource[1][idx]:
-            dest = self.dest_path
-        else:
-            dest = self.datasource[1][idx].folderpath
+        dest = self._get_author_folder(self.datasource[0][idx], self.datasource[1][idx])
         print(idx)
         print(dest)
         shutil.move(self.datasource[0][idx].folderpath, dest)
         self.parse(self.source_path, self.dest_path, force_parse_source=True)
+
+    def _get_author_folder(self, source, dest):
+        if not dest:
+            p = os.path.join(self.dest_path, source.author_string)
+            os.mkdir(p)
+            return p
+        if dest.folderpath[-1] == ']':
+            return dest.folderpath
+        else:
+            p = os.path.join(self.dest_path, dest.author_string if len(dest.author_string) > len(source.author_string) else source.author_string)
+            os.mkdir(p)
+            shutil.move(dest.folderpath, p)
+            return p
 
     def get_datasource(self, source_directory, dest_directory):
         datasource = []
@@ -87,8 +98,9 @@ class MangaTab(Tab):
         result = []
         result.append([d.foldername for d in datasource[0]])
         result.append([d.foldername if d != None else '' for d in datasource[1]])
-        result.append([self.check_folder_is_duplicate(
-            datasource[0][i], datasource[1][i]) for i in range(len(datasource[0]))])
+        result.append(
+            [self.check_folder_is_duplicate(datasource[0][i], datasource[1][i]) for i in range(len(datasource[0]))]
+        )
         return list(map(list, zip(*result)))
 
     def check_folder_is_duplicate(self, source, dest):

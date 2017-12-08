@@ -26,6 +26,9 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.edit_dest.setText(vars.default_manga_dest_path)
         self.ui.tableWidgetManga = ui.tableWidget.tableWidgetManga(self.ui.tab)
         self.ui.tableWidgetManga.scroll_preview_func = self.preview_label.scroll_preview
+        self.ui.horizontalLayout.removeWidget(self.ui.tableWidgetImage)
+        self.ui.tableWidgetImage = ui.tableWidget.tableWidgetImage(self.ui.horizontalLayoutWidget)
+        self.ui.horizontalLayout.insertWidget(0, self.ui.tableWidgetImage)
         self.ui.tableWidgetMagazine.verticalHeader().hide()
         self.ui.tableWidgetMagazine.horizontalHeader().hide()
         self.ui.label_work_preview.setAlignment(QtCore.Qt.AlignCenter)
@@ -45,6 +48,7 @@ class MainWidget(QtWidgets.QMainWindow):
         self.ui.tableWidgetImage.cellPressed.connect(self.controller.on_show_image)
         self.ui.tabWidget.currentChanged.connect(self.on_change_tab)
         self.ui.tableWidgetMagazine.itemSelectionChanged.connect(self.on_work_selected_in_magazine)
+        self.ui.pushButtonMove.clicked.connect(lambda: self.controller.on_move_image(self.ui.tableWidgetImage.selectedItems()))
 
     def set_tableWidget_items(self, table_data):
         (current_table, func) = {
@@ -79,7 +83,9 @@ class MainWidget(QtWidgets.QMainWindow):
                 current_table.setCellWidget(row_idx, 3, button)
 
     def _set_image_table(self, current_table, table_data):
-        pass
+        for row_idx, row in enumerate(table_data):
+            for column_idx, cell in enumerate(row):
+                current_table.setItem(row_idx, column_idx, QtWidgets.QTableWidgetItem(cell))
 
     def _set_magazine_table(self, current_table, table_data):
         def create_checkbox_item(text):

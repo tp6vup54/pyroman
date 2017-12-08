@@ -12,7 +12,11 @@ class ImageTab(Tab):
         super().parse(source_path, dest_path, force_parse_source, force_parse_dest)
         images = parse_image(source_path)
         self.datasource = self.get_datasource(images, dest_path)
+        self.invalidate_tableWidget()
+
+    def invalidate_tableWidget(self):
         self.table_data = self.get_table_data(self.datasource)
+        self.view.set_tableWidget_items(self.table_data)
 
     def get_datasource(self, images, dest_path):
         datasource = [images]
@@ -20,11 +24,11 @@ class ImageTab(Tab):
         return datasource
 
     def get_table_data(self, datasource):
-        self.table_data = []
-        self.table_data.append([image.file_name for image in datasource[0]])
-        self.table_data.append([list(_.keys())[0] if _ else '' for _ in datasource[1]])
-        self.table_data.append(self.get_duplicated_list(datasource))
-        self.view.set_tableWidget_items(self.table_data)
+        result = []
+        result.append([image.file_name for image in datasource[0]])
+        result.append([list(_.keys())[0] if _ else '' for _ in datasource[1]])
+        result.append(self.get_duplicated_list(datasource))
+        return list(map(list, zip(*result)))
 
     def get_duplicated_list(self, datasource):
         result = []
@@ -45,20 +49,31 @@ class ImageTab(Tab):
     def get_datasource_dest(self, images, dest_path):
         result = []
         dest_dict = {}
-        for _ in os.listdir(dest_path):
-            fullpath = dest_path + vars.split + _
-            if os.path.isdir(fullpath):
-                dest_dict.update({os.path.basename(_): fullpath})
+        for root, dirs, files in os.walk(dest_path):
+            for d in dirs:
+                fullpath = os.path.join(root, d)
+                dest_dict.update({os.path.basename(d).lower(): fullpath})
         for i in images:
             found = False
             if not i.tags:
                 result.append('')
                 continue
             for t in i.tags:
-                if t in dest_dict:
-                    result.append({t: dest_dict[t]})
+                name = t['name']
+                if name.lower() in dest_dict:
+                    result.append({name: dest_dict[name.lower()]})
                     found = True
                     break
             if not found:
                 result.append('')
         return result
+
+    def move_image(self, idx):
+        source = self.datasource[0][idx]
+        dest = self.datasource[1][idx]
+        os.rename(source.full_path, )
+
+    def remove_moved_index(self, idx):
+        for _ in self.datasource:
+            _.remove(idx)
+        self.invalidate_tableWidget()
